@@ -49,5 +49,5 @@ No modules.
 | Name | Description |
 |------|-------------|
 | <a name="output_project"></a> [project](#output\_project) | TFE/TFC project |
-| <a name="output_workspace_ids"></a> [workspace\_ids](#output\_workspace\_ids) | TFE/TFC project workspaces |
+| <a name="output_workspaces"></a> [workspaces](#output\_workspaces) | TFE/TFC project workspaces |
 <!-- END_TF_DOCS -->

@@ -3,7 +3,7 @@ output "project" {
   value       = tfe_project.project
 }
 
-output "workspace_ids" {
+output "workspaces" {
   description = "TFE/TFC project workspaces"
-  value       = length(tfe_workspace.workspaces) > 0 ? tfe_workspace.workspaces.*.id : null
+  value       = tfe_workspace.workspaces
 }
