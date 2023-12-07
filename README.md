@@ -10,6 +10,8 @@ If multiple projects are required, for_each can be used when calling the module,
 
 Additional efforts can be aided by adding variables to the workspace for authentication to the provider endpoints.  This should be performed in parallel to this effort through dependency injection.
 
+To prevent the destruction of resources, all resources have `prevent_destroy` set to `true` by default.  This can be overridden by setting the `prevent_destroy` variable to `false`.
+
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
 
@@ -40,8 +42,9 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_name"></a> [name](#input\_name) | TFE/TFC project name | `string` | n/a | yes |
-| <a name="input_oauth_token_id"></a> [oauth\_token\_id](#input\_oauth\_token\_id) | VCS OAuth token ID | `string` | n/a | yes |
+| <a name="input_oauth_token_id"></a> [oauth\_token\_id](#input\_oauth\_token\_id) | VCS OAuth token ID | `string` | `""` | no |
 | <a name="input_organization"></a> [organization](#input\_organization) | TFE/TFC organization name | `string` | n/a | yes |
+| <a name="input_prevent_destroy"></a> [prevent\_destroy](#input\_prevent\_destroy) | Prevent the destruction of any resources in this module | `bool` | `true` | no |
 | <a name="input_workspaces"></a> [workspaces](#input\_workspaces) | TFE/TFC project workspaces | <pre>map(object({<br>    auto_apply = optional(bool, false)<br>    vcs_repo = object({<br>      identifier = string<br>    })<br>  }))</pre> | `{}` | no |
 
 ## Outputs

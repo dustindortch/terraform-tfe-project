@@ -20,6 +20,13 @@ variable "workspaces" {
 }
 
 variable "oauth_token_id" {
+  default     = ""
   description = "VCS OAuth token ID"
   type        = string
+}
+
+variable "prevent_destroy" {
+  default     = true
+  description = "Prevent the destruction of any resources in this module"
+  type        = bool
 }
