@@ -11,10 +11,6 @@ terraform {
 resource "tfe_project" "project" {
   organization = var.organization
   name         = var.name
-
-  lifecycle {
-    prevent_destroy = var.prevent_destroy
-  }
 }
 
 resource "tfe_workspace" "workspaces" {
@@ -47,6 +43,5 @@ resource "tfe_workspace" "workspaces" {
       ])
       error_message = "If workspaces are defined, then oauth_token_id must also be defined."
     }
-    prevent_destroy = var.prevent_destroy
   }
 }

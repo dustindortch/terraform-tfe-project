@@ -24,9 +24,3 @@ variable "oauth_token_id" {
   description = "VCS OAuth token ID"
   type        = string
 }
-
-variable "prevent_destroy" {
-  default     = true
-  description = "Prevent the destruction of any resources in this module"
-  type        = bool
-}
