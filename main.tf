@@ -30,14 +30,14 @@ resource "tfe_workspace" "workspaces" {
     precondition {
       condition = anytrue([
         alltrue([
-          length(var.var.workspaces) > 0,
-          var.var.oauth_token_id != ""
+          length(var.workspaces) > 0,
+          var.oauth_token_id != ""
         ]),
         alltrue([
-          length(var.var.workspaces) == 0,
+          length(var.workspaces) == 0,
           anytrue([
-            var.var.oauth_token_id == "",
-            var.var.oauth_token_id != ""
+            var.oauth_token_id == "",
+            var.oauth_token_id != ""
           ])
         ])
       ])
