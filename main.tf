@@ -22,11 +22,15 @@ resource "tfe_workspace" "workspaces" {
   project_id   = tfe_project.project.id
 
   vcs_repo {
+    branch         = each.value.vcs_repo.branch
     identifier     = each.value.vcs_repo.identifier
     oauth_token_id = var.oauth_token_id
   }
 
   lifecycle {
+    ignore_changes = [
+      vcs_repo[0].branch
+    ]
     precondition {
       condition = anytrue([
         alltrue([
@@ -41,7 +45,35 @@ resource "tfe_workspace" "workspaces" {
           ])
         ])
       ])
-      error_message = "If workspaces are defined, then oauth_token_id must also be defined."
+      error_message = "oauth_token_id must also be defined if workspaces are declared."
     }
   }
+}
+
+locals {
+  variables = merge(flatten([
+    for k, v in var.workspaces : {
+      for vk, vv in v.variables : "${k}_${vk}" => {
+        workspace   = k
+        key         = vk
+        value       = vv.value
+        category    = vv.category
+        description = vv.description
+        hcl         = vv.hcl
+        sensitive   = vv.sensitive
+
+      }
+    }
+  ])...)
+}
+
+resource "tfe_variable" "vars" {
+  for_each = local.variables
+
+  key          = each.value.key
+  value        = each.value.value
+  category     = each.value.category
+  description  = each.value.description
+  sensitive    = each.value.sensitive
+  workspace_id = tfe_workspace.workspaces[each.value.workspace].id
 }
