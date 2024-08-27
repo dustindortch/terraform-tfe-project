@@ -35,15 +35,16 @@ variable "workspaces" {
     tag_names                      = optional(list(string), [])
     terraform_version              = optional(string, null)
     trigger_patterns               = optional(list(string), [])
+    trigger_prefixes               = optional(list(string), [])
     working_directory              = optional(string, null)
 
-    vcs_repo = optional(object({
+    vcs_repo = object({
       branch             = optional(string, null)
       identifier         = string
       ingress_submodules = optional(bool, false)
       oauth_token_id     = optional(string, null)
       tags_regex         = optional(string, null)
-    }), {})
+    })
 
     variables = optional(map(object({
       value       = string
@@ -55,12 +56,14 @@ variable "workspaces" {
   }))
 
   validation {
-    condition = alltrue([
-      for k, v in values(var.workspaces) : contains(
-        local.valid_variable_categories,
-        v.category
-      )
-    ])
+    condition = alltrue(flatten([
+      for ki, vi in var.workspaces : [
+        for kj, vj in vi.variables : contains(
+          local.valid_variable_categories,
+          vj.category
+        )
+      ]
+    ]))
     error_message = "Variable category must be one of: ${join(", ", local.valid_variable_categories)}"
   }
 
@@ -75,11 +78,11 @@ variable "workspaces" {
 
   validation {
     condition = alltrue([
-      for k, v in var.workspaces : sum(
-        length(v.triggers_patterns) > 0 ? 1 : 0,
+      for k, v in var.workspaces : sum([
+        length(v.trigger_patterns) > 0 ? 1 : 0,
         length(v.trigger_prefixes) > 0 ? 1 : 0,
         v.vcs_repo.tags_regex != null ? 1 : 0
-      ) < 2
+      ]) < 2
     ])
     error_message = "trigger_patterns, trigger_prefixes, and vcs_repo.tags_regex are mutually exclusive."
   }
@@ -87,7 +90,7 @@ variable "workspaces" {
   validation {
     condition = alltrue([
       for k, v in var.workspaces : anytrue([
-        contains(local.valid_execution_modes, v.execution_mode),
+        try(contains(local.valid_execution_modes, v.execution_mode), false),
         !(v.execution_mode != null)
       ])
     ])

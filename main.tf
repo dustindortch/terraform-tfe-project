@@ -35,20 +35,17 @@ resource "tfe_workspace" "workspaces" {
   structured_run_output_enabled  = each.value.structured_run_output_enabled
   tag_names                      = each.value.tag_names
   terraform_version              = each.value.terraform_version
-  trigger_patterns               = each.value.trigger_patterns
+  trigger_patterns               = length(each.value.trigger_patterns) == 0 ? null : each.value.trigger_patterns
+  trigger_prefixes               = length(each.value.trigger_prefixes) == 0 ? null : each.value.trigger_prefixes
   working_directory              = each.value.working_directory
 
-  dynamic "vcs_repo" {
-    for_each = each.value.vcs_repo != {} ? [1] : []
-    content {
-      branch             = each.value.vcs_repo.branch
-      identifier         = each.value.vcs_repo.identifier
-      ingress_submodules = each.value.vcs_repo.ingress_submodules
-      oauth_token_id = coalesce(
-        each.value.vcs_repo.oauth_token_id,
-        var.oauth_token_id
-      )
-    }
+  vcs_repo {
+    branch     = each.value.vcs_repo.branch
+    identifier = each.value.vcs_repo.identifier
+    oauth_token_id = coalesce(
+      each.value.vcs_repo.oauth_token_id,
+      var.oauth_token_id
+    )
   }
 
   lifecycle {
