@@ -37,21 +37,21 @@ variable "workspaces" {
     trigger_patterns               = optional(list(string), [])
     working_directory              = optional(string, null)
 
-    vcs_repo = object({
+    vcs_repo = optional(object({
       branch             = optional(string, null)
       identifier         = string
       ingress_submodules = optional(bool, false)
       oauth_token_id     = optional(string, null)
       tags_regex         = optional(string, null)
-    })
+    }), {})
 
-    variables = map(object({
+    variables = optional(map(object({
       value       = string
       category    = optional(string, "terraform")
       description = optional(string, null)
       hcl         = optional(bool, false)
       sensitive   = optional(bool, false)
-    }))
+    })), {})
   }))
 
   validation {

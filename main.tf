@@ -38,14 +38,17 @@ resource "tfe_workspace" "workspaces" {
   trigger_patterns               = each.value.trigger_patterns
   working_directory              = each.value.working_directory
 
-  vcs_repo {
-    branch             = each.value.vcs_repo.branch
-    identifier         = each.value.vcs_repo.identifier
-    ingress_submodules = each.value.vcs_repo.ingress_submodules
-    oauth_token_id = coalesce(
-      each.value.vcs_repo.oauth_token_id,
-      var.oauth_token_id
-    )
+  dynamic "vcs_repo" {
+    for_each = each.value.vcs_repo != {} ? [1] : []
+    content {
+      branch             = each.value.vcs_repo.branch
+      identifier         = each.value.vcs_repo.identifier
+      ingress_submodules = each.value.vcs_repo.ingress_submodules
+      oauth_token_id = coalesce(
+        each.value.vcs_repo.oauth_token_id,
+        var.oauth_token_id
+      )
+    }
   }
 
   lifecycle {
